@@ -1,4 +1,4 @@
-name: pi3
+name: pi3-inventorytech
 version: 16.04-0.7
 summary: Raspberry Pi 3 support package
 description: |
@@ -63,9 +63,13 @@ parts:
     prepare: |
       PACKAGES="http://ports.ubuntu.com/ubuntu-ports/dists/xenial-updates/universe/binary-armhf/Packages.gz"
       PKGPATH="$(wget -q -O- $PACKAGES|zcat|grep-dctrl linux-raspi2 |\
-        grep linux-image|grep Filename|tail -1| sed 's/^Filename: //')"
+        grep linux-image|grep Filename|grep 1103.111 | sed 's/^Filename: //')"
       wget http://ports.ubuntu.com/ubuntu-ports/$PKGPATH
       dpkg -x $(basename $PKGPATH) unpack/
+      OVERLAYPKGPATH="$(wget -q -O- $PACKAGES|zcat|grep-dctrl linux-raspi2 |\
+        grep linux-image|grep Filename|tail -1| sed 's/^Filename: //')"
+      wget http://ports.ubuntu.com/ubuntu-ports/$OVERLAYPKGPATH
+      dpkg -x $(basename $OVERLAYPKGPATH) unpack/
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -a unpack/lib/firmware/*/device-tree/* $SNAPCRAFT_PART_INSTALL/boot-assets
